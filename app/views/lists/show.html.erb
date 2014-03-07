@@ -1,0 +1,50 @@
+
+<p id="notice"><%= notice %></p>
+
+<p>
+  
+ <strong><%= @list.title %></strong>
+</p>
+
+<table>
+	<thead>
+		<tr>
+			<th></th>
+			<th>Name</th>
+			<th>Due Date</th>
+		</tr>
+	</thead>
+  <tbody>
+    <% @list.tasks.select { |t| t.persisted?}.each do |task| %>
+      <tr>
+		<td><%= link_to task.starred? ? '★' : '☆' , toggle_favorite_list_task_path(@list, task), method: :patch, style: 'text-decoration: none;' %></td>
+        <td><%= link_to task.name , edit_list_task_path(@list, task) %></td>
+		<td><%= task.date_due && task.date_due.strftime('%B %d, %Y %l:%M %p') %></td>
+			
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= form_for @task, url: list_tasks_path(@list) do |f| %> 
+
+<% if @task.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@task.errors.count, "error") %> prohibited this list from being saved:</h2>
+
+      <ul>
+      <% @task.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+        <%= f.label :name %>
+        <%= f.text_field :name %>
+
+  
+  <%= f.submit "Add Task" %>
+
+<% end %>
+<%= link_to 'Edit', edit_list_path(@list) %> |
+<%= link_to 'Back', lists_path %>
